@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+// @import url('https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.2/css/bulma.min.css');
+
 /* 
   【Todoのデータ構成】
 　・key：Todoを特定するID（String）
@@ -33,10 +35,10 @@ function Todo() {
         ITSS ToDoアプリ
       </div>
       {items.map(item => (
-        <label className="panel-block">
-            <input type="checkbox" />
-            {item.text}
-        </label>
+        <TodoItem 
+             key={item.key}
+             item={item}
+        />
       ))}
       <div className="panel-block">
         {items.length} items
