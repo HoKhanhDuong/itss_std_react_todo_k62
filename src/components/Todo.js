@@ -29,6 +29,24 @@ function Todo() {
     /* テストコード 終了 */
   ]);
 
+  const [tab,setTab] = useState("すべて");
+  const itemTab = () => {
+      const tabItem = items.filter((item) => {
+          if (tab === "すべて")
+              return item;
+          if (tab === "未完了" && !item.done) {
+              return item;
+          }
+          if (tab === "完了済み" && item.done) {
+              return item;
+          }
+      });
+      return tabItem;
+  };
+  const handleChangeTab = (target) =>{
+      setTab(target);
+  };
+
   const onchange = (e) => {
     if(e.key === 'Enter'){
       const newItem =  {
@@ -41,20 +59,36 @@ function Todo() {
     }
   }
 
+  const onClickBox = (key) => {
+    items.map(item => {
+      if(item.key === key) {
+        item.done = !item.done;
+      }
+    });
+    putItems([...items]);
+  }
+
+  const todo = items.map(item => (
+    <TodoItem 
+         key={item.key}
+         item={item}
+         onClickBox={onClickBox}
+    />
+  ));
+
   return (
     <div className="panel">
       <div className="panel-heading">
         ITSS ToDoアプリ
       </div>
       <input type="text" className="input" onKeyDown={(e) => onchange(e)}></input>
-      {items.map(item => (
-        <TodoItem 
-             key={item.key}
-             item={item}
-        />
-      ))}
+      <br/>
+      
+      {todo}
       <div className="panel-block">
+      <Filter onClick={handleChangeTab}/>
         {items.length} items
+        {itemTab().length} items
       </div>
     </div>
   );
