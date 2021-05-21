@@ -17,13 +17,14 @@ import Filter from './Filter';
 /* カスタムフック */
 import useStorage from '../hooks/storage';
 
-import useStorageFirebase from "../hooks/storage_firebase";
+import useStorageTodo from "../hooks/storage_todo";
+import Auth from "./Auth";
 
 /* ライブラリ */
 import {getKey} from "../lib/util";
 
 function Todo() {
-      const [items, addItem, updateItem, cleanItems] = useStorageFirebase();
+const [items, addItem, updateItem, cleanItems] = useStorageTodo();
 
     const handleCheckTodoItem = (item) => {
         updateItem(item);
@@ -54,6 +55,7 @@ function Todo() {
     };
     return (
         <div className="panel">
+        <Auth />
             <div className="panel-heading">
                 ITSS ToDoアプリ
             </div>
