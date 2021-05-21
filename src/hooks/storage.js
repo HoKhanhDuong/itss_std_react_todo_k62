@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import {db} from '../lib/firebase'
 /* 
   【Storageフック】
 　・TodoをlocalStorageを使って保存する
@@ -9,32 +9,58 @@ import { useState, useEffect } from 'react';
 　  - localstrageにあるTodoを削除する
 */
 
-const STORAGE_KEY = 'itss-todo';
-
-function useStorage() {
+function useStorageFirebase() {
   const [items, setItems] = useState([]);
 　
 　/* 副作用を使う */
   useEffect(() => {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if(!data){
-      localStorage.setItem(STORAGE_KEY,JSON.stringify([]));
-    }else{
-      setItems(JSON.parse(data));
-    }
+    const fetchData =  async () => {
+      const snap = await db.get();
+      setItems(snap.docs.map(doc => (
+          {...doc.data(), key: doc.id}
+      )));
+    };
+    fetchData();
   }, []);
 
-  const putItems = items => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    setItems(items);
+  const addItem = async item => {
+    await db.doc(`${item.key}`).set({
+      text: item.text,
+      done: item.done,
+    });
+    setItems([item,...items]);
   };
+  const updateItem = async item => {
+    await db.doc(`${item.key}`).update({
+      text: item.text,
+      done: !item.done,
+    });
+    setItems(items.map((tmp) => {
+      if (tmp.key === item.key)
+        tmp.done = !tmp.done;
+      return tmp;
+    }))
+  };
+  //
+  // const putItems = async items => {
+  //   await clearItems();
+  //   for(let item of items){
+  //     await db.doc(`${item.key}`).set({
+  //       text: item.text,
+  //       done: item.done,
+  //     });
+  //   }
+  //   setItems(items);
+  // };
 
-  const clearItems = () => {
-    localStorage.setItem(STORAGE_KEY,JSON.stringify([]));
+  const clearItems = async () => {
+    for(let item of items){
+      await db.doc(item.key).delete();
+    }
     setItems([]);
   };
 
-  return [items, putItems, clearItems];
+  return [items, addItem, updateItem, clearItems];
 }
 
-export default useStorage;
+export default useStorageFirebase; 
