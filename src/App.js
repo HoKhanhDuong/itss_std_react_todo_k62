@@ -5,12 +5,13 @@ import './styles/main.css';
 
 /* コンポーネント */
 import Todo from './components/Todo';
+import Auth from "./components/Auth";
 
 function App() {
   
   return (
     <div className="container is-fluid">
-      <Todo />
+      <Auth />
     </div>
   );
 }

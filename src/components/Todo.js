@@ -55,7 +55,6 @@ const [items, addItem, updateItem, cleanItems] = useStorageTodo();
     };
     return (
         <div className="panel">
-        <Auth />
             <div className="panel-heading">
                 ITSS ToDoアプリ
             </div>
